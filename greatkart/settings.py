@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'django.contrib.sites',
     'category',
     'accounts',
     'store',
@@ -132,6 +133,21 @@ STATICFILES_DIRS = [
 #media files configuaration
 MEDIA_ROOT= os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: "danger",
+}
+
+
+# SMTP configuaration
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'divyauddantii4@gmail.com'
+# EMAIL_HOST_PASSWORD = 'divyasurendra@2212'
+# EMAIL_USE_TLS = True
 
 
 # Default primary key field type
