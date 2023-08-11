@@ -13,6 +13,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 
+from carts.views import _cart_id
+from carts.models import Cart, CartItem
+
 # Create your views here.
 
 def register(request):
@@ -62,6 +65,22 @@ def login(request):
         user = auth.authenticate(email=email, password=password)
 
         if user is not None:
+            try:
+                print('Entering inside try block')
+                cart = Cart.objects.get(cart_id=_cart_id(request))
+                is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+                print(is_cart_item_exists)
+                if is_cart_item_exists:
+                    cart_item = CartItem.objects.filter(cart=cart)
+                    print(cart_item)
+
+                    for item in cart_item:
+                        item.user = user
+                        item.save()
+
+            except:
+                print('Entering inside except block')
+                pass
             auth.login(request, user)
             messages.success(request, 'You are now logged in')
             return redirect('dashboard')
@@ -76,6 +95,7 @@ def logout(request):
     auth.logout(request)
     messages.success(request, 'You are logged out.')
     return redirect('login')
+
 
 def activate(request):
     return
@@ -132,7 +152,7 @@ def resetpassword_validate(request, uidb64, token):
     try:
       uid=urlsafe_base64_decode(uidb64).decode()
       user = Account._default_manager.get(pk=uid)
-    except(TypeError, ValueError, OverFlowError, Account.DoesNotExist):
+    except(TypeError, ValueError, OverflowError, Account.DoesNotExist):
       user = None
 
     if user is not None and default_token_generator.check_token(user, token):
